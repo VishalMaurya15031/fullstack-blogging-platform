@@ -1,0 +1,57 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Create Account — BlogPulse{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="form-card">
+    <h1 class="form-title">Join BlogPulse</h1>
+    <p class="form-subtitle">Create your author profile and start sharing your voice.</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="form-group">
+        <label class="form-label">Username *</label>
+        {{ form.username }}
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          {{ form.first_name }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          {{ form.last_name }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email Address *</label>
+        {{ form.email }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password *</label>
+        {{ form.password }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Confirm Password *</label>
+        {{ form.confirm_password }}
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Create Account</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 1.5rem; color: var(--text-muted); font-size: 0.9rem;">
+      Already have an account? <a href="{% url 'login' %}" style="color: var(--accent-cyan); font-weight: 600;">Log in</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

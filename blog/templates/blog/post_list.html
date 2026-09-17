@@ -1,0 +1,114 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<div class="hero">
+  <div class="container">
+    <h1 class="hero-title">Ideas, stories & engineering <br><span style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">thought leadership.</span></h1>
+    <p class="hero-subtitle">Discover perspectives on tech, design, AI, and full-stack development written by passionate authors.</p>
+    
+    <!-- Search Form -->
+    <form action="{% url 'post_list' %}" method="GET" class="search-box">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="text" name="q" value="{{ query }}" class="search-input" placeholder="Search articles, topics, or keywords...">
+    </form>
+
+    <!-- Category Filter Pills -->
+    <div class="categories-bar">
+      <a href="{% url 'post_list' %}" class="cat-pill {% if not selected_category %}active{% endif %}">
+        All Topics
+      </a>
+      {% for cat in categories %}
+        <a href="{% url 'post_list' %}?category={{ cat.slug }}" class="cat-pill {% if selected_category.slug == cat.slug %}active{% endif %}">
+          <i class="fa-solid fa-hashtag"></i> {{ cat.name }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  {% if query %}
+    <div style="margin-bottom: 2rem;">
+      <h2>Search results for "<span style="color: var(--accent-cyan);">{{ query }}</span>" ({{ posts.count }} found)</h2>
+    </div>
+  {% endif %}
+
+  <!-- Featured Blog Post (If no query and featured post exists) -->
+  {% if featured_post and not query and not selected_category %}
+    <div class="featured-card">
+      <div class="featured-img-container">
+        {% if featured_post.banner_url %}
+          <img src="{{ featured_post.banner_url }}" alt="{{ featured_post.title }}" class="featured-img">
+        {% else %}
+          <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop" alt="Blog Banner" class="featured-img">
+        {% endif %}
+      </div>
+      <div class="featured-content">
+        <div>
+          {% if featured_post.category %}
+            <span class="badge badge-{{ featured_post.category.badge_color }}">{{ featured_post.category.name }}</span>
+          {% endif %}
+          <span style="font-size: 0.8rem; color: var(--text-dim); margin-left: 0.5rem;"><i class="fa-solid fa-star" style="color: var(--accent-amber);"></i> Featured Story</span>
+        </div>
+        
+        <h2 class="featured-title">
+          <a href="{% url 'post_detail' featured_post.slug %}">{{ featured_post.title }}</a>
+        </h2>
+        <p class="featured-excerpt">{{ featured_post.excerpt }}</p>
+        
+        <div class="author-meta">
+          <div class="avatar">{{ featured_post.author.username|slice:":1"|upper }}</div>
+          <div class="meta-info">
+            <div class="meta-author">{{ featured_post.author.get_full_name|default:featured_post.author.username }}</div>
+            <div class="meta-date">{{ featured_post.created_at|date:"M d, Y" }} &bull; {{ featured_post.read_time }} min read &bull; {{ featured_post.views_count }} views</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Recent Posts Section -->
+  <div class="section-title">
+    <span>{% if selected_category %}{{ selected_category.name }} Articles{% else %}Latest Articles{% endif %}</span>
+  </div>
+
+  <div class="blog-grid">
+    {% for post in recent_posts %}
+      <article class="blog-card">
+        <div class="card-img-wrapper">
+          <a href="{% url 'post_detail' post.slug %}">
+            {% if post.banner_url %}
+              <img src="{{ post.banner_url }}" alt="{{ post.title }}" class="card-img">
+            {% else %}
+              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=800&auto=format&fit=crop" alt="Blog image" class="card-img">
+            {% endif %}
+          </a>
+        </div>
+        <div class="card-body">
+          {% if post.category %}
+            <span class="badge badge-{{ post.category.badge_color }}">{{ post.category.name }}</span>
+          {% endif %}
+          <h3 class="card-title">
+            <a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a>
+          </h3>
+          <p class="card-excerpt">{{ post.excerpt }}</p>
+          
+          <div class="author-meta">
+            <div class="avatar" style="width: 34px; height: 34px; font-size: 0.9rem;">{{ post.author.username|slice:":1"|upper }}</div>
+            <div class="meta-info">
+              <div class="meta-author">{{ post.author.username }}</div>
+              <div class="meta-date">{{ post.created_at|date:"M d" }} &bull; {{ post.read_time }} min read</div>
+            </div>
+          </div>
+        </div>
+      </article>
+    {% empty %}
+      <div style="grid-column: 1/-1; text-align: center; padding: 4rem 0;">
+        <i class="fa-solid fa-folder-open" style="font-size: 3rem; color: var(--text-dim); margin-bottom: 1rem;"></i>
+        <h3>No articles found</h3>
+        <p style="color: var(--text-muted);">Try adjusting your search query or topic filter.</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

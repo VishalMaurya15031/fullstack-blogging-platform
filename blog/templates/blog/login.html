@@ -1,0 +1,29 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Log In — BlogPulse{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="form-card">
+    <h1 class="form-title">Welcome Back</h1>
+    <p class="form-subtitle">Log in to publish stories, comment, and manage your articles.</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        {{ form.username }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        {{ form.password }}
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Log In</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 1.5rem; color: var(--text-muted); font-size: 0.9rem;">
+      Don't have an account? <a href="{% url 'register' %}" style="color: var(--accent-cyan); font-weight: 600;">Sign up</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

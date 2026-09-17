@@ -1,0 +1,59 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ title }} — BlogPulse{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="form-card" style="max-width: 800px;">
+    <h1 class="form-title"><i class="fa-solid fa-feather-pointed" style="color: var(--accent-primary);"></i> {{ title }}</h1>
+    <p class="form-subtitle">Share your insights, tutorials, or experiences with the community.</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label class="form-label">Story Title *</label>
+        {{ form.title }}
+        {% if form.title.errors %}<div style="color: #f87171; font-size: 0.85rem;">{{ form.title.errors }}</div>{% endif %}
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label class="form-label">Topic / Category</label>
+          {{ form.category }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Publishing Status</label>
+          {{ form.status }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Cover Image URL (Optional)</label>
+        {{ form.banner_url }}
+        <span style="font-size: 0.8rem; color: var(--text-dim);">Tip: Paste an Unsplash link (e.g. https://images.unsplash.com/photo-...)</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Short Summary / Excerpt *</label>
+        {{ form.excerpt }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Story Content (Supports Markdown & HTML) *</label>
+        {{ form.content }}
+      </div>
+
+      <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; font-size: 0.85rem; color: #c7d2fe;">
+        <strong>Markdown Quick Guide:</strong> 
+        <code># Heading 1</code> | <code>**Bold**</code> | <code>*Italic*</code> | <code>> Quote</code> | <code>```code```</code>
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <a href="{% url 'post_list' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> Publish Article</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

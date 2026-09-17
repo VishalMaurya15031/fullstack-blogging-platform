@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}BlogPulse — Full-Stack Django Publishing Platform{% endblock %}</title>
+  <meta name="description" content="Discover inspiring stories, tech tutorials, and expert insight on BlogPulse.">
+  
+  <!-- CSS Styles -->
+  <link rel="stylesheet" href="{% static 'blog/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Scroll Progress Indicator -->
+  <div id="progress-bar"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-flex">
+      <a href="{% url 'post_list' %}" class="logo">
+        <span class="logo-dot"></span> BlogPulse
+      </a>
+      
+      <ul class="nav-links">
+        <li><a href="{% url 'post_list' %}" class="nav-link">Explore</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'create_post' %}" class="nav-link"><i class="fa-solid fa-pen-nib"></i> Write Story</a></li>
+          <li><a href="{% url 'user_profile' %}" class="nav-link"><i class="fa-solid fa-user-gear"></i> Dashboard</a></li>
+          <li><a href="{% url 'logout' %}" class="nav-link btn btn-secondary" style="padding: 0.4rem 1rem;">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}" class="nav-link">Log In</a></li>
+          <li><a href="{% url 'register' %}" class="btn btn-primary">Get Started</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Flash Toast Messages -->
+  {% if messages %}
+    <div class="container messages-container">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          <span>{{ message }}</span>
+          <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="this.parentElement.remove()"></i>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Main Content Area -->
+  <main style="flex-grow: 1;">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 BlogPulse. Built with Python & Django Full-Stack Architecture.</p>
+    </div>
+  </footer>
+
+  <!-- JS Scripts -->
+  <script src="{% static 'blog/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

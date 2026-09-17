@@ -1,0 +1,106 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.title }} — BlogPulse{% endblock %}
+
+{% block content %}
+<div class="container">
+  <article>
+    <!-- Article Header -->
+    <header class="article-header">
+      {% if post.category %}
+        <span class="badge badge-{{ post.category.badge_color }}">{{ post.category.name }}</span>
+      {% endif %}
+      <h1 class="article-title">{{ post.title }}</h1>
+      
+      <div class="author-meta" style="justify-content: center; border: none; padding-top: 0.5rem;">
+        <div class="avatar">{{ post.author.username|slice:":1"|upper }}</div>
+        <div class="meta-info" style="text-align: left;">
+          <div class="meta-author">{{ post.author.get_full_name|default:post.author.username }}</div>
+          <div class="meta-date">Published on {{ post.created_at|date:"F d, Y" }} &bull; {{ post.read_time }} min read &bull; {{ post.views_count }} views</div>
+        </div>
+      </div>
+
+      {% if user == post.author %}
+        <div style="margin-top: 1.5rem; display: flex; gap: 0.8rem; justify-content: center;">
+          <a href="{% url 'edit_post' post.slug %}" class="btn btn-secondary" style="font-size: 0.85rem;"><i class="fa-solid fa-pen"></i> Edit Article</a>
+          <a href="{% url 'delete_post' post.slug %}" class="btn btn-danger" style="font-size: 0.85rem;"><i class="fa-solid fa-trash"></i> Delete</a>
+        </div>
+      {% endif %}
+    </header>
+
+    <!-- Hero Image -->
+    {% if post.banner_url %}
+      <img src="{{ post.banner_url }}" alt="{{ post.title }}" class="article-hero-img">
+    {% endif %}
+
+    <!-- Article Content -->
+    <div class="article-content">
+      {{ post_html|safe }}
+    </div>
+  </article>
+
+  <!-- Related Posts -->
+  {% if related_posts %}
+    <div style="max-width: 800px; margin: 0 auto 4rem;">
+      <h3 class="section-title">Related Stories</h3>
+      <div class="blog-grid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));">
+        {% for rpost in related_posts %}
+          <div class="blog-card">
+            <div class="card-body">
+              <span class="badge badge-{{ rpost.category.badge_color }}">{{ rpost.category.name }}</span>
+              <h4 style="font-size: 1.1rem; margin: 0.5rem 0;"><a href="{% url 'post_detail' rpost.slug %}">{{ rpost.title }}</a></h4>
+              <p style="font-size: 0.85rem; color: var(--text-dim);">{{ rpost.created_at|date:"M d" }} &bull; {{ rpost.read_time }} min read</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Comments Section -->
+  <section class="comments-section">
+    <h3 style="font-family: var(--font-heading); font-size: 1.6rem; margin-bottom: 2rem;">
+      <i class="fa-regular fa-comments"></i> Discussion ({{ comments.count }})
+    </h3>
+
+    <!-- Comment Form -->
+    <div class="comment-card" style="margin-bottom: 2.5rem; background: rgba(30, 41, 64, 0.5);">
+      <h4 style="margin-bottom: 1rem;">Leave a thought</h4>
+      <form method="POST">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            {{ comment_form.name }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            {{ comment_form.email }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Comment</label>
+          {{ comment_form.body }}
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Post Comment</button>
+      </form>
+    </div>
+
+    <!-- Comments List -->
+    {% for comment in comments %}
+      <div class="comment-card">
+        <div class="comment-header">
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <div class="avatar" style="width: 32px; height: 32px; font-size: 0.85rem;">{{ comment.name|slice:":1"|upper }}</div>
+            <span class="comment-author">{{ comment.name }}</span>
+          </div>
+          <span class="comment-date">{{ comment.created_at|timesince }} ago</span>
+        </div>
+        <p class="comment-body">{{ comment.body }}</p>
+      </div>
+    {% empty %}
+      <p style="color: var(--text-dim); text-align: center; padding: 2rem;">No comments yet. Be the first to start the conversation!</p>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}
